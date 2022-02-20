@@ -1,0 +1,17 @@
+{
+   "userId": "100120345",
+   "timestamp": "20/02/2022 12:00",
+   "goal": "Strength",
+   "exercise": "Deadlift",
+   "weight": "80",
+   "state1": "Complete",
+   "reason1": "N/A",
+   "state2": "Complete",
+   "reason2": "N/A",
+   "state3": "Complete",
+   "reason3": "N/A",
+   "state4": "Complete",
+   "reason4": "bar tilt",
+   "state5": "Incomplete",
+   "reason5": "fatigue"
+}
