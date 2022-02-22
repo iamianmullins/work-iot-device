@@ -44,7 +44,7 @@ def scan():
            uidToString = [str(int) for int in uid]
            uidToString = "".join(uidToString).strip("0")
 #           print("Found card with UID:", [hex(i) for i in uid])
-           print ("Found card with UIT: ", uidToString)
+           print ("Found card with UID: ", uidToString)
            nfcId= uidToString
            return nfcId
        pn532.power_down()
