@@ -37,7 +37,7 @@ def createUser():
 #Retrieves user from Firebase
 def getUser(testId):
    #test user
-   testId = '1225025456122'
+   testId = '1225025456'
    ref = db.reference('users/'+testId)
    results = ref.get()
    print (type(results))

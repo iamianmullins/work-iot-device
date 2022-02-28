@@ -12,7 +12,7 @@ blue = [0, 0, 255]
 orange = [247, 177, 0]
 
 if __name__ == "__main__":
-#   get card id from NFC scanner
+   #get card id from NFC scanner
    while True:
       cardId = None
       cardId = nfcscanner.scan()
@@ -23,6 +23,7 @@ if __name__ == "__main__":
          if fbData is not None:
             # parse fbData:
             userData = json.loads(fbData)
+            print ("found: " + userData["user"])
             exercise = getExercise.getExercise(userData["user"])
             print(exercise)
       time.sleep(2)
