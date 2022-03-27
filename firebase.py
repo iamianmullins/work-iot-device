@@ -12,47 +12,32 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://workiot-3acb1-default-rtdb.europe-west1.firebasedatabase.app/'
 })
 
-# *****For testing purposes
-# Read fbase/users.json
-# Writes user to Firebase realtime database
-
-
-def createTestUser():
-    try:
-        with open('./fbase/users.json', 'r') as jsonfile:
-            userdata = jsonfile.read()
-        data = json.loads(userdata)
-        now = datetime.now()
-        dateTime = now.strftime("%d/%m/%y %H:%M:%S")
-        ref = db.reference('/users')
-        home_ref = ref.child(data['userId'])
-        home_ref.update({
-            'username': data['username'],
-            'userId': data['userId'],
-            'timestamp': dateTime,
-            'goal': data['goal'],
-            '1rm': data['1rm']
-        }
-        )
-        print("Test user " + data['username'] + " created")
-    except:
-        print("An exception occurred")
-
-
-# Retrieves user from Firebase
-def getUser(testId):
-    try:
-        # test user
-        #testId = '1225025456'
-        ref = db.reference('users/'+testId)
+# Returns session userdata retrieved from Firebase
+def getUser(nfcScan):
+        ref = db.reference('settings/')
         results = ref.get()
-        # print(results)
-        return results
-    except:
-        print("An exception occurred")
+        print("---------")
+        userData = getSessionUserData(results, nfcScan)
+        print(userData)
+        return userData
+
 
 # Read fbase/exercise.json
 # Writes exercise to firebase realtime database
+def getSessionUserData(data, nfcId):
+   for i in data:
+      for j in data[i].values():
+         if str(data[i]['nfc']) == nfcId:
+            print(data[i]['nfc'])
+            userDict = {
+              'uid': data[i]['uid'],
+              'nfc': data[i]['nfc'],
+              'exerciseGoal': data[i]['exerciseGoal'],
+              'email': data[i]['email'],
+            }
+            return userDict
+         else:
+            print("Not a match")
 
 
 def pushDb():
@@ -86,7 +71,4 @@ def pushDb():
 
 
 if __name__ == "__main__":
-    print("")
-#   pushDb()
-    createTestUser()
-#   getUser(1)
+    print("Testing firebase")

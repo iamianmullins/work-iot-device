@@ -21,21 +21,19 @@ if __name__ == "__main__":
             cardId = None
             cardId = nfcscanner.scan()
             if cardId is not None:
-                #print("Card found with the following id: " + cardId)
+                print("Card found with the following id: " + cardId)
                 fbData = getUser(cardId)
-                # print(fbData)
-                #fbData =  '{ "user":"Ian", "id":"123456A", "goal":"strength"}'
                 if fbData is not None:
-                    print(fbData["username"])
+                    print(fbData["email"])
                     exercise = getExercise.getExercise()
                     print(exercise + " selected")
-                    repSetData = getWorkoutData(fbData["goal"])
-                    print("Workout selected for: " + fbData["goal"])
+                    repSetData = getWorkoutData(fbData["exerciseGoal"])
+                    print("Workout selected for: " + fbData["exerciseGoal"])
                     print("You should be lifting: " +
                           str(repSetData["pcntrm"]) + " kg's based on your 1 rep max")
                     print("You will do: " + str(repSetData["sets"]) +
                           " sets " + " of " + str(repSetData["reps"]) + " reps")
-                    beginExercise(repSetData)
+ #                   beginExercise(repSetData)
             time.sleep(2)
     except:
-        print("An exception occurred")
+        print("An exception occurred in main")
