@@ -1,4 +1,5 @@
 from sense_hat import SenseHat
+import numpy as np
 from time import sleep
 import numpy
 
@@ -9,6 +10,10 @@ grn = [0, 255, 0]
 red = [255, 0, 0]
 og = [252, 65, 3]
 b = [0, 0, 0]
+
+tiltInd = False
+speedInd = False
+fatigueInd = False
 
 # LED martix arrows
 # Green up arrow
@@ -62,6 +67,7 @@ def countdown(sec, colour):
 
 # Control for repitition phase
 def reps(sec, phase):
+    initialTime = sec
     # phase provides user instruction for
     # lifting(concentric),
     # stationary(isometric1)or(isometric2)
@@ -75,22 +81,59 @@ def reps(sec, phase):
     # Tilt indicator is set to False
     # If orientation is not between 85-96,
     # tilt is detected and tiltInd is set to true
-    tiltInd = False
+    global tiltInd
+    global speedInd
+    global fatigueInd
+    failInd = False
+    xList = []
+    yList = []
+    zList = []
     while sec > 0:
+        print(sec)
+        acceleration = sense.get_accelerometer_raw()
+        x = acceleration['x']
+        y = acceleration['y']
+        z = acceleration['z']
+        x = abs(round(x, 2))
+        y = abs(round(y, 2))
+        z = abs(round(z, 2))
+        xList.append(x)
+        yList.append(y)
+        zList.append(z)
+        if phase == "concentric" or phase == "eccentric":
+            if sec in np.arange(0, 0.5, 0.25) and ((np.average(xList) < 1 and np.average(yList) < 1 and np.average(zList) < 1)):
+                print("Fatigue detected")
+                fatigueInd = True
+            elif sec in np.arange(0.5, initialTime-0.5) and (x > 1.075 or y > 1.075 or z > 1.075):
+                print("Speed detected")
+                speedInd = True
+
         orientation = sense.get_orientation()
         roll = round(orientation["roll"], 0)
-        print(roll)
+        # print(roll)
         if roll not in range(85, 96):
             print("Bar tilt detected!")
             tiltInd = True
         sec -= .25
         sleep(0.25)
     sense.clear()
-    return tiltInd
+    if speedInd and tiltInd:
+        failInd = True
+    elif tiltInd:
+        failInd = True
+    elif speedInd:
+        failInd = True
+    elif fatigueInd:
+        failInd = True
+    else:
+        failInd = False
+    return failInd
 
 
 def beginExercise(data):
-    failList = []
+    global tiltInd
+    global speedInd
+    failList = {}
 # sets for loop
     for set in range(1, data["sets"]+1):
         print("Current Set: " + str(set))
@@ -101,33 +144,45 @@ def beginExercise(data):
             countdown(30, blue)
         # reps for loop
         for rep in range(1, data["reps"]+1):
-            tiltInd = []
+            tiltInd = False
+            speedInd = False
+            failInd = []
             print("Current Rep: " + str(rep))
             # Reps function returns a boolean value
             # This is appended to the tiltInd list
-            tiltInd.append(reps(data["concentric"], "concentric"))
-            tiltInd.append(reps(data["isometric1"], "isometric1"))
-            tiltInd.append(reps(data["eccentric"], "eccentric"))
-            tiltInd.append(reps(data["isometric2"], "isometric2"))
-            # tiltInd list is assessed for any true values
+            failInd.append(reps(data["concentric"], "concentric"))
+            failInd.append(reps(data["isometric1"], "isometric1"))
+            failInd.append(reps(data["eccentric"], "eccentric"))
+            failInd.append(reps(data["isometric2"], "isometric2"))
+            failString = ""
+            if (speedInd and tiltInd) or (fatigueInd and speedInd) or (fatigueInd and tiltInd):
+                failString = "multiple"
+            elif speedInd:
+                failString = "speed"
+            elif tiltInd:
+                failString = "bar-tilt"
+            elif fatigueInd:
+                failString = "fatigue"
+            else:
+                failString = " successful"
+            # failInd list is assessed for any true values
             # if any fail is detected, fail data is appended to the failList
-            if numpy.any(tiltInd):
-                print("Set: " + str(set) + ", Rep: " + str(rep) + " failed")
-                fail = ("Set: " + str(set) + ", Rep: " + str(rep) + " failed")
-                failList.append(fail)
-    print(failList)
+            failList["reasonSet"+str(set)] = failString
+            failList["repsSet"+str(set)] = rep
+            failList["totalReps"] = (set * rep)
+
     return failList
 
 
 if __name__ == "__main__":
     data = {
-        "sets": 2,
-        "reps": 2,
+        "sets": 1,
+        "reps": 3,
         "pcntrm": 75,
-        "restPeriod": 10,
-        "eccentric": 3,
+        "restPeriod": 15,
+        "eccentric": 4,
         "isometric1": 1,
-        "concentric": 4,
+        "concentric": 5,
         "isometric2": 1
     }
     failList = beginExercise(data)
