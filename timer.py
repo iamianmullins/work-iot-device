@@ -47,18 +47,19 @@ def countdown(sec, colour):
     # Display current timer in 10 second intervals
     while sec >= 10:
         if sec % 10 == 0:
-            sense.show_message(str(sec), scroll_speed=0.05, text_colour=blue)
+            sense.show_message(str(sec), scroll_speed=0.025, text_colour=blue)
             sleep(1)
+            print (sec)
             sec -= 1
-            print(sec)
         elif sec % 10 != 0:
             sense.clear()
-            print(sec)
+            print (sec)
             sec -= 1
             sleep(1)
     # Countdown to 1
     while sec > 0:
         sense.show_letter(str(sec), colour)
+        print (sec)
         sec -= 1
         sleep(1)
     sense.clear()
@@ -141,7 +142,7 @@ def beginExercise(data):
             # rest period between sets
             countdown(data["restPeriod"], blue)
         else:
-            countdown(30, blue)
+            countdown(60, blue)
         # reps for loop
         for rep in range(1, data["reps"]+1):
             tiltInd = False
@@ -170,7 +171,11 @@ def beginExercise(data):
             failList["reasonSet"+str(set)] = failString
             failList["repsSet"+str(set)] = rep
             failList["totalReps"] = (set * rep)
-
+    for set in range(data["sets"]+1, 6):
+        failList["reasonSet"+str(set)] = "N/A"
+        failList["repsSet"+str(set)] = "N/A"
+        print ("FAILLIST")
+        print (failList)
     return failList
 
 
@@ -186,4 +191,5 @@ if __name__ == "__main__":
         "isometric2": 1
     }
     failList = beginExercise(data)
+    print(type(failList))
     print(failList)

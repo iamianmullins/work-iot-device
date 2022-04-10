@@ -1,11 +1,14 @@
 import json
 import time
 from firebase import getUser
+from firebase import pushDb
 from getWorkoutData import getWorkoutData
 from timer import beginExercise
 import getExercise
 import nfcscanner
+from sense_hat import SenseHat
 
+sense = SenseHat()
 red = [255, 0, 0]
 green = [0, 255, 0]
 white = [255, 255, 255]
@@ -21,19 +24,41 @@ if __name__ == "__main__":
             cardId = None
             cardId = nfcscanner.scan()
             if cardId is not None:
-                print("Card found with the following id: " + cardId)
                 fbData = getUser(cardId)
                 if fbData is not None:
-                    print(fbData["email"])
                     exercise = getExercise.getExercise()
-                    print(exercise + " selected")
                     repSetData = getWorkoutData(fbData["exerciseGoal"])
-                    print("Workout selected for: " + fbData["exerciseGoal"])
-                    print("You should be lifting: " +
-                          str(repSetData["pcntrm"]) + " kg's based on your 1 rep max")
-                    print("You will do: " + str(repSetData["sets"]) +
+                    if exercise == "bench-press":
+                       workingWeight = str(round(float(int(fbData["oneRmBp"])/100)*int(repSetData["pcntrm"]), 2))
+                    elif exercise == "deadlift":
+                       workingWeight = str(round(float(int(fbData["oneRmDl"])/100)*int(repSetData["pcntrm"]), 2))
+                    elif exercise == "squat":
+                       workingWeight = str(round(float(int(fbData["oneRmSq"])/100)*int(repSetData["pcntrm"]), 2))
+                    goalMsg = ("Workout goal selected: " + fbData["exerciseGoal"])
+                    wrkWeightMsg = ("You should be lifting: " +
+                          str(workingWeight) + " kg's based on your 1 rep max")
+                    repsAndSetsMsg = ("You will do: " + str(repSetData["sets"]) +
                           " sets " + " of " + str(repSetData["reps"]) + " reps")
- #                   beginExercise(repSetData)
+                    print (goalMsg)
+                    print (wrkWeightMsg)
+                    print (repsAndSetsMsg)
+                    sense.show_message(str(goalMsg), scroll_speed=0.05, text_colour=blue)
+                    time.sleep(1)
+                    sense.show_message(str(wrkWeightMsg), scroll_speed=0.05, text_colour=blue)
+                    time.sleep(1)
+                    sense.show_message(str(repsAndSetsMsg), scroll_speed=0.05, text_colour=blue)
+                    time.sleep(1)
+                    workoutData = beginExercise(repSetData)
+                    workoutData['guuid'] = fbData["guuid"]
+                    workoutData['userId'] = fbData["uid"]
+                    workoutData['email'] = fbData["email"]
+                    workoutData['exerciseGoal'] = fbData["exerciseGoal"]
+                    workoutData['exerciseType'] = exercise
+                    workoutData['workingWeight'] = (str(workingWeight))
+                    pushDb(workoutData)
+                    workoutData.clear()
+                    fbData.clear()
+
             time.sleep(2)
     except:
         print("An exception occurred in main")

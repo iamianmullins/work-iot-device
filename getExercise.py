@@ -11,7 +11,7 @@ def getExercise():
     # default option
     str = "Select workout.."
     sense.show_message(str, scroll_speed=scroll)
-    option = "bp"
+    option = "squat"
     # Wait for user exercise selection via sensehat joystick
     # Joystick left = Deadlift
     # Joystick right = Squat
@@ -21,22 +21,19 @@ def getExercise():
         for event in sense.stick.get_events():
             if event.direction == "left":
                 option = "deadlift"
-                sense.show_message(option, scroll_speed=scroll)
-                sense.clear()
-            elif event.direction == "right":
-                option = "squat"
-                sense.show_message(option, scroll_speed=scroll)
-                sense.clear()
-            elif event.direction == "up":
-                option = "bench-press"
-                sense.show_message(option, scroll_speed=scroll)
-                sense.clear()
-            elif event.direction == "down" and event.action == "held":
-                sense.show_message(option, text_colour=green,
-                                   scroll_speed=scroll)
+                sense.show_message(option, text_colour=green, scroll_speed=scroll)
                 sense.clear()
                 return option
-
+            elif event.direction == "right":
+                option = "squat"
+                sense.show_message(option, text_colour=green, scroll_speed=scroll)
+                sense.clear()
+                return option
+            elif event.direction == "up":
+                option = "bench-press"
+                sense.show_message(option, text_colour=green, scroll_speed=scroll)
+                sense.clear()
+                return option
 
 if __name__ == "__main__":
     option = getExercise()

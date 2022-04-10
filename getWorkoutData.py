@@ -1,5 +1,5 @@
 def getWorkoutData(goalType):
-    goal = goalType.lower()
+    goal = goalType.lower().replace(" ", "")
     if goal == "endurance":
         data = {
             "sets": 3,
@@ -37,7 +37,17 @@ def getWorkoutData(goalType):
         }
         return data
     else:
-        print("Something wrong here")
+        data = {
+            "sets": 2,
+            "reps": 2,
+            "pcntrm": 75,
+            "restPeriod": 25,
+            "eccentric": 3,
+            "isometric1": 1,
+            "concentric": 4,
+            "isometric2": 1
+        }
+        return data
 
 
 if __name__ == "__main__":

@@ -13,6 +13,11 @@ import board
 import busio
 from digitalio import DigitalInOut
 
+from sense_hat import SenseHat
+sense = SenseHat()
+blue = [0, 0, 255]
+msg = "N"
+
 # I2C import
 from adafruit_pn532.i2c import PN532_I2C
 
@@ -37,6 +42,7 @@ def scan():
    print("Waiting for RFID/NFC card...")
    while True:
        # Check if a card is available to read
+       sense.show_letter(str(msg), blue)
        uid = pn532.read_passive_target(timeout=0.5)
        print(".", end="")
        nfcId = ""
@@ -46,6 +52,7 @@ def scan():
 #           print("Found card with UID:", [hex(i) for i in uid])
            print ("Found card with UID: ", uidToString)
            nfcId= uidToString
+           sense.clear()
            return nfcId
        pn532.power_down()
        time.sleep(1.0)
