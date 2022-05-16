@@ -6,7 +6,7 @@ from firebase import pushDb
 from getWorkoutData import getWorkoutData
 from timer import beginExercise
 import getExercise
-#import nfcscanner
+import nfcscanner
 from sense_hat import SenseHat
 from gpiozero import Button
 import time
@@ -60,11 +60,11 @@ if __name__ == "__main__":
         while True:
             cardId = None
             exercise = None
-            sense.show_message(str("Enter your card ID: "),
+            sense.show_message(str("Scan your card: "),
                                scroll_speed=0.05, text_colour=blue)
             # Read input for now due to broken hardware
-            cardId = input("Enter your card ID: ")
-            #cardId = nfcscanner.scan()
+            # cardId = input("Enter your card ID: ")
+            cardId = nfcscanner.scan()
             if cardId is not None:
                 fbData = getUser(cardId)
                 if fbData is not None:
@@ -81,8 +81,8 @@ if __name__ == "__main__":
                         workingWeight = (
                             round(float(int(fbData["oneRmSq"])/100)*int(repSetData["pcntrm"]), 2))
 
-                  #  displayWorkoutData(
-                  #      fbData["exerciseGoal"], workingWeight, repSetData["sets"], repSetData["reps"])
+                    displayWorkoutData(
+                        fbData["exerciseGoal"], workingWeight, repSetData["sets"], repSetData["reps"])
 
                     workoutData = beginExercise(repSetData, exercise)
                     workoutData['guuid'] = fbData["guuid"]

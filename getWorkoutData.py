@@ -31,12 +31,13 @@ def getWorkoutData(goalType):
         elif goal == "strength":
             data = {
                 "sets": 5,
-                "reps": 4,
+                "reps": 3,
                 "pcntrm": 85,
-                "restPeriod": 180,
+#                "restPeriod": 180,
+                "restPeriod": 20,
                 "eccentric": 2,
                 "isometric1": 1,
-                "concentric": 1,
+                "concentric": 2,
                 "isometric2": 1
             }
             return data

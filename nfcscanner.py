@@ -49,7 +49,7 @@ def scan():
         nfcId = ""
         if uid is not None:
             uidToString = [str(int) for int in uid]
-            uidToString = "".join(uidToString).strip("0")
+            uidToString = "".join(uidToString).strip("0")[0:5]
 #           print("Found card with UID:", [hex(i) for i in uid])
             print("Found card with UID: ", uidToString)
             nfcId = uidToString

@@ -64,8 +64,8 @@ def getSessionUserSettings(data, nfcId):
                     badNfc = (
                         "NFC ID unknown: " + str(nfcId))
                     print(badNfc)
-                    sense.show_message(
-                        str(badNfc), scroll_speed=0.05, text_colour=blue)
+        sense.show_message(
+        str(badNfc), scroll_speed=0.05, text_colour=blue)
     except Exception as e:
         print("Oops!", e.__class__, "occurred.")
 

@@ -147,7 +147,7 @@ def beginExercise(data, exercise):
                 countdown(data["restPeriod"], blue)
             else:
                 # Countdown to begin workout
-                countdown(30, blue)
+                countdown(20, blue)
             # reps for loop
             for rep in range(1, data["reps"]+1):
                 failInd = []
